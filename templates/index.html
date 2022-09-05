@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+    <button @click="getdata">Load Data</button>
+    <p> Name: [[data.name]] </p>
+    <p> University: [[data.University]] </p>
+
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+var app = new Vue({
+    el: '#app',
+    delimiters: ['[[', ']]'],
+    data() {
+      return {
+        data:{},
+      }
+    },
+    mounted: function(){
+      console.log('mounted');
+    },
+    methods: {
+        getdata: function() {
+            var that = this;
+            $.ajax({
+                method: 'GET',
+                url: `/api/firstapp/first/`,
+            }).then(response =>{
+                that.data = response;
+            }).catch(error => {
+                console.log(error);
+            });
+        },  
+    },
+  })
+
+</script>
+</body>
+</html>

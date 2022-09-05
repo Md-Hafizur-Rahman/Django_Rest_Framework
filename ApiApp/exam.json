@@ -1,0 +1,19 @@
+{
+    "name":"mohammad hafizur",
+    "email":"hafizur@gmail.com",
+    "is_active":true,
+    "age":24,
+    "is_null":null,
+    "education":[{
+        "instituition":"DIU",
+        "location":"Dhaka" 
+    },
+    {
+        "instituition":"BUBT",
+        "location":"Dhaka" 
+    },
+    {
+        "subject":["math","physics"]
+    }  
+]
+}

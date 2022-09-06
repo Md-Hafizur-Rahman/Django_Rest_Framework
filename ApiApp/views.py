@@ -7,9 +7,13 @@ from django.views.generic import TemplateView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-'''
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated,AllowAny
+
+from ApiApp.models import Contact
+
 # Create your views here.
-class HomeView(TemplateView):
+''' class HomeView(TemplateView):
     template_name = "template.html"
     def get(self, request):
         context={
@@ -32,8 +36,9 @@ class HomeApiView(APIView):
         }
         return Response(context) '''
 def homeView(request):
-    return render(request,'index.html')
+    return render(request,'index.html') 
 @api_view(['GET','POST'])
+#@permission_classes([IsAuthenticated,])
 def firstApi(request):
     if request.method=='POST':
         name=request.data['name']
@@ -47,6 +52,7 @@ def firstApi(request):
     return Response(context)
 from django.contrib.auth.models import User
 @api_view(['POST',])
+@permission_classes([IsAuthenticated])
 def registrationApi(request):
     if request.method=='POST':
         username=request.data['username']
@@ -68,4 +74,19 @@ def registrationApi(request):
         
         user.set_password(raw_password=password)
         user.save()     
-        return Response({"success":"User registration successfull."}) 
+        return Response({"success":"User registration successfull."})
+class ContactApiView(APIView):
+    permission_classes=([AllowAny])
+    def post(self,request,format=None): 
+        data=request.data
+        name=data['name']
+        email=data['email']
+        subject=data['subject']
+        phone=data['phone']
+        details=data['details']
+        
+        contact=Contact(name=name,email=email,subject=subject,phone=phone,details=details)
+        contact.save()
+        return Response({'success':'Successfully saved contact'})
+    def get(self,request,format=None):
+        return Response({'success':'Successfully from get'})

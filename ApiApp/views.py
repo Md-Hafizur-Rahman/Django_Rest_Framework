@@ -75,21 +75,30 @@ def registrationApi(request):
         user.set_password(raw_password=password)
         user.save()     
         return Response({"success":"User registration successfull."})
-from .serializers import ContactSerializer,ContactForm
+from .serializers import ContactSerializer,ContactForm,ContactSerializerOne
 class ContactApiView(APIView):
     permission_classes=([AllowAny])
     def post(self,request,format=None): 
+        # this code work for django.
         ''' data=request.data
         form=ContactForm(request.POST)
         if form.is_valid():
             form.save() '''
             
-        serializer=ContactSerializer(data=request.data)
+        serializer=ContactSerializerOne(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data)
+    def put(self,request,format=None): 
+        contact=Contact.objects.get(id=6)
+        serializer=ContactSerializerOne(data=request.data, instance=contact)
         if serializer.is_valid():
             serializer.save()
         return Response(serializer.data)
         #return Response({'success':'Successfully saved contact'})
     def get(self,request,format=None):
-        queryset=Contact.objects.all()
-        serializer=ContactSerializer(queryset,many=True)
+        queryset=Contact.objects.get(id=6)
+        serializer=ContactSerializerOne(queryset,many=False)
         return Response(serializer.data)
+
+

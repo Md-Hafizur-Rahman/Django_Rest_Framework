@@ -75,18 +75,21 @@ def registrationApi(request):
         user.set_password(raw_password=password)
         user.save()     
         return Response({"success":"User registration successfull."})
+from .serializers import ContactSerializer,ContactForm
 class ContactApiView(APIView):
     permission_classes=([AllowAny])
     def post(self,request,format=None): 
-        data=request.data
-        name=data['name']
-        email=data['email']
-        subject=data['subject']
-        phone=data['phone']
-        details=data['details']
-        
-        contact=Contact(name=name,email=email,subject=subject,phone=phone,details=details)
-        contact.save()
-        return Response({'success':'Successfully saved contact'})
+        ''' data=request.data
+        form=ContactForm(request.POST)
+        if form.is_valid():
+            form.save() '''
+            
+        serializer=ContactSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data)
+        #return Response({'success':'Successfully saved contact'})
     def get(self,request,format=None):
-        return Response({'success':'Successfully from get'})
+        queryset=Contact.objects.all()
+        serializer=ContactSerializer(queryset,many=True)
+        return Response(serializer.data)

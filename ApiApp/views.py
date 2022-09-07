@@ -102,7 +102,7 @@ class ContactApiView(APIView):
         serializer=ContactSerializerOne(queryset,many=False)
         return Response(serializer.data)
 
-from rest_framework.generics import CreateAPIView,ListCreateAPIView, RetrieveAPIView,UpdateAPIView,RetrieveUpdateAPIView,DestroyAPIView
+from rest_framework.generics import CreateAPIView,ListCreateAPIView, RetrieveAPIView,UpdateAPIView,RetrieveUpdateAPIView,DestroyAPIView,RetrieveUpdateDestroyAPIView
 from .models import BlogPost 
 from rest_framework import status
 
@@ -146,7 +146,7 @@ class POSTRetriviewAPIView(RetrieveAPIView):
         instance = self.get_object()
         serializer = PostDetailsSerializer(instance)
         return Response(serializer.data)
-class POSTretrieveupdateAPIView(RetrieveUpdateAPIView):
+class POSTretrieveupdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes=[IsAuthenticated,]
     queryset=BlogPost.objects.filter(is_active=True)
     serializer_class=BlogPostSerializer
@@ -158,6 +158,9 @@ class POSTretrieveupdateAPIView(RetrieveUpdateAPIView):
         return Response(serializer.data)
     def perform_update(self, serializer):
         return serializer.save(user=self.request.user)
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save()
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()

@@ -102,7 +102,7 @@ class ContactApiView(APIView):
         serializer=ContactSerializerOne(queryset,many=False)
         return Response(serializer.data)
 
-from rest_framework.generics import CreateAPIView,ListCreateAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView,ListCreateAPIView, RetrieveAPIView,UpdateAPIView
 from .models import BlogPost 
 from rest_framework import status
 
@@ -146,4 +146,8 @@ class POSTRetriviewAPIView(RetrieveAPIView):
         instance = self.get_object()
         serializer = PostDetailsSerializer(instance)
         return Response(serializer.data)
-    
+class POSTupdateAPIView(UpdateAPIView):
+    permission_classes=[IsAuthenticated,]
+    queryset=BlogPost.objects.filter(is_active=True)
+    serializer_class=BlogPostSerializer
+    lookup_field='id'

@@ -102,7 +102,7 @@ class ContactApiView(APIView):
         serializer=ContactSerializerOne(queryset,many=False)
         return Response(serializer.data)
 
-from rest_framework.generics import CreateAPIView,ListCreateAPIView
+from rest_framework.generics import CreateAPIView,ListCreateAPIView, RetrieveAPIView
 from .models import BlogPost 
 from rest_framework import status
 
@@ -136,7 +136,14 @@ class PostCreateView(ListCreateAPIView):
         queryset=BlogPost.objects.filter(is_active=True)
         return queryset 
 
-""" class POSTListAPIView(ListAPIView):
+class POSTRetriviewAPIView(RetrieveAPIView):
     permission_classes=[IsAuthenticated,]
-    queryset=BlogPost.objects.all()
-    serializer_class=BlogPostSerializer """
+    queryset=BlogPost.objects.filter(is_active=True)
+    serializer_class=BlogPostSerializer
+    lookup_field='id'
+    
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = PostDetailsSerializer(instance)
+        return Response(serializer.data)
+    

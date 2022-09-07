@@ -3,7 +3,7 @@ from pyexpat import model
 from unicodedata import name
 from django import forms
 from rest_framework import serializers
-from .models import Contact
+from .models import Contact, BlogPost
 
 class ContactForm(forms.ModelForm):
     class Meta:
@@ -35,3 +35,12 @@ class ContactSerializerOne(serializers.Serializer):
         instance.details = validated_data.get('details', instance.details)
         instance.save()
         return instance
+class BlogPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogPost
+        # fields="__all__"
+        exclude=['user','is_active']
+class PostDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogPost
+        fields="__all__"

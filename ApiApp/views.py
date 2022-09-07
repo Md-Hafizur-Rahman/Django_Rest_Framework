@@ -11,6 +11,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated,AllowAny
 
 from ApiApp.models import Contact
+#from ApiProject.ApiApp.models import BlogPost
 
 # Create your views here.
 ''' class HomeView(TemplateView):
@@ -75,7 +76,7 @@ def registrationApi(request):
         user.set_password(raw_password=password)
         user.save()     
         return Response({"success":"User registration successfull."})
-from .serializers import ContactSerializer,ContactForm,ContactSerializerOne
+from .serializers import *
 class ContactApiView(APIView):
     permission_classes=([AllowAny])
     def post(self,request,format=None): 
@@ -101,4 +102,23 @@ class ContactApiView(APIView):
         serializer=ContactSerializerOne(queryset,many=False)
         return Response(serializer.data)
 
+from rest_framework.generics import CreateAPIView
+from .models import BlogPost 
+from rest_framework import status
 
+class PostCreateView(CreateAPIView):
+    permission_classes=[IsAuthenticated,]
+    queryset=BlogPost.objects.all()
+    serializer_class=BlogPostSerializer
+    
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
+        
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance= self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        
+        serializer=PostDetailsSerializer(instance=instance, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

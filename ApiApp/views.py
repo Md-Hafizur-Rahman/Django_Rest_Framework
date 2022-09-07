@@ -102,7 +102,7 @@ class ContactApiView(APIView):
         serializer=ContactSerializerOne(queryset,many=False)
         return Response(serializer.data)
 
-from rest_framework.generics import CreateAPIView,ListCreateAPIView, RetrieveAPIView,UpdateAPIView
+from rest_framework.generics import CreateAPIView,ListCreateAPIView, RetrieveAPIView,UpdateAPIView,RetrieveUpdateAPIView
 from .models import BlogPost 
 from rest_framework import status
 
@@ -146,8 +146,23 @@ class POSTRetriviewAPIView(RetrieveAPIView):
         instance = self.get_object()
         serializer = PostDetailsSerializer(instance)
         return Response(serializer.data)
-class POSTupdateAPIView(UpdateAPIView):
+class POSTretrieveupdateAPIView(RetrieveUpdateAPIView):
     permission_classes=[IsAuthenticated,]
     queryset=BlogPost.objects.filter(is_active=True)
     serializer_class=BlogPostSerializer
     lookup_field='id'
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = PostDetailsSerializer(instance)
+        return Response(serializer.data)
+    def perform_update(self, serializer):
+        return serializer.save(user=self.request.user)
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        instance= self.perform_update(serializer)
+        serializer = PostDetailsSerializer(instance)
+        return Response(serializer.data)

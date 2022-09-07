@@ -10,6 +10,7 @@ urlpatterns = [
     path('contact/',ContactApiView.as_view()),
     path('post/',PostCreateView.as_view()),
     # path('post/<int:id>/',POSTRetriviewAPIView.as_view()),
-    path('post/<int:id>/',POSTretrieveupdateAPIView.as_view()),
+    #path('post/<int:id>/',POSTretrieveupdateAPIView.as_view()),
+    path('post/<int:id>/',POSdeleteAPIView.as_view()),
     # path('postlist/',POSTListAPIView.as_view()),
 ]

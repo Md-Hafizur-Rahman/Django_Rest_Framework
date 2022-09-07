@@ -102,11 +102,11 @@ class ContactApiView(APIView):
         serializer=ContactSerializerOne(queryset,many=False)
         return Response(serializer.data)
 
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView,ListCreateAPIView
 from .models import BlogPost 
 from rest_framework import status
 
-class PostCreateView(CreateAPIView):
+class PostCreateView(ListCreateAPIView):
     permission_classes=[IsAuthenticated,]
     queryset=BlogPost.objects.all()
     serializer_class=BlogPostSerializer
@@ -122,3 +122,21 @@ class PostCreateView(CreateAPIView):
         
         serializer=PostDetailsSerializer(instance=instance, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = PostDetailsSerializer(queryset, many=True)
+        return Response(serializer.data)
+    def get_queryset(self):
+        queryset=BlogPost.objects.filter(is_active=True)
+        return queryset 
+
+""" class POSTListAPIView(ListAPIView):
+    permission_classes=[IsAuthenticated,]
+    queryset=BlogPost.objects.all()
+    serializer_class=BlogPostSerializer """

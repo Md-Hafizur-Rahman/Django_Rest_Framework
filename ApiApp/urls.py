@@ -9,4 +9,5 @@ urlpatterns = [
     path('registration/',registrationApi),
     path('contact/',ContactApiView.as_view()),
     path('post/',PostCreateView.as_view()),
+    # path('postlist/',POSTListAPIView.as_view()),
 ]
